@@ -1,12 +1,14 @@
 (ns beepbop.kernel
   "Kernel runner namespace"
   (:require [clojure.core.async :refer [<! <!! timeout chan go go-loop]]
-            [clojure.tools.logging :as log]))
+            [clojure.tools.logging :as log])
+  (:use [beepbop.github :as gh]))
 
 (defn ^:private compute-main []
   "Current thread kernel, will be executed
    every intervals"
-  (log/info "Hello World !"))
+  (log/info "New main thread spawned")
+  (gh/invite-user "trosa"))
 
 ;; Thread delay interval
 (def ^:private interval 10000)
@@ -24,8 +26,8 @@
 
 (defn boot-kernel []
   "Start runnable kernel"
-  (log/info "Booting up kernel")
   (let [ch (atom nil)]
+    (log/info "Booting up kernel")
     (reset! ch (chan-interface))
     (while (cref)
       (<!! @ch))))
