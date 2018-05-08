@@ -1,6 +1,6 @@
 (ns beepbop.kernel
   "Kernel runner namespace"
-  (:require [clojure.core.async :as a :refer [<! timeout chan go go-loop]]
+  (:require [clojure.core.async :refer [<! <!! timeout chan go go-loop]]
             [clojure.tools.logging :as log]))
 
 (defn ^:private compute-main []
@@ -16,10 +16,16 @@
   "Simple condition wrapper"
   @acond)
 
-(defn start-kernel []
-  "Start monothilic runner"
+(defn ^:private chan-interface []
+  "Channel interface runner"
+  (go (while (cref)
+        (<! (timeout interval))
+        (compute-main))))
+
+(defn boot-kernel []
+  "Start runnable kernel"
   (log/info "Booting up kernel")
-  (go
+  (let [ch (atom nil)]
+    (reset! ch (chan-interface))
     (while (cref)
-      (<! (timeout interval))
-      (compute-main))))
+      (<!! @ch))))
