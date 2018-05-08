@@ -1,6 +1,6 @@
 (ns beepbop.core-test
   (:require [clojure.test :refer :all]
-            [beepbop.core :refer :all]))
+            [beepbop.main :refer :all]))
 
 (deftest a-test
   (testing "FIXME, I fail."
